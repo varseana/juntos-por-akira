@@ -1,0 +1,36 @@
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
+  | string
+  | undefined;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Faltan las variables de entorno VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY. Copia .env.example a .env.local y completa los valores de tu proyecto Supabase."
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+  },
+});
+
+export const RAFFLE_ID = "akira";
+export const TOTAL_NUMBERS = 300;
+export const PRICE_PER_NUMBER = 1000;
+export const PRIZE_AMOUNT = 50000;
+export const SINPE_NUMBER = "506 8556 9584";
+export const SINPE_NAME = "Sean Alexander Vargas Romero";
+export const WHATSAPP_NUMBER = "50685569584";
+export const AKIRA_PHOTOS_BUCKET = "akira-photos";
+
+// Ruta secreta del panel de administracion. El panel solo aparece si visitas
+// la pagina con este hash al final de la URL, por ejemplo:
+//   https://tu-sitio.com/#/panel-akira-8f3k29
+// Cambia este valor por uno propio y no lo compartas. Aunque alguien conozca la
+// ruta, no puede modificar nada sin tu correo y contrasena de admin (RLS).
+export const ADMIN_SECRET_PATH = "panel-akira-8f3k29";

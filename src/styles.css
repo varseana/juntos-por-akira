@@ -1,0 +1,1256 @@
+:root {
+  --cream: #fbf3e7;
+  --cream-deep: #f4e7d3;
+  --pink: #f3c9d4;
+  --pink-soft: #f9dfe6;
+  --mint: #bfe3cf;
+  --mint-soft: #d9efe2;
+  --lavender: #d9cdeb;
+  --lavender-soft: #eae2f5;
+  --beige: #e7d8c0;
+  --ink: #5b4a63;
+  --ink-soft: #8a6d9c;
+  --line: #c9b6a3;
+  --sold: #d98a9a;
+  --available: #8fc9a6;
+  --shadow: rgba(91, 74, 99, 0.16);
+  --radius: 14px;
+  --font-display: "Baloo 2", "Trebuchet MS", sans-serif;
+  --font-body: "Nunito", "Trebuchet MS", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--cream);
+  background-image: radial-gradient(
+      circle at 12% 18%,
+      var(--lavender-soft) 0%,
+      transparent 34%
+    ),
+    radial-gradient(circle at 88% 12%, var(--pink-soft) 0%, transparent 32%),
+    radial-gradient(circle at 78% 86%, var(--mint-soft) 0%, transparent 36%);
+  background-attachment: fixed;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Fondo con motivos flotando en capas de profundidad */
+.bg-critters {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Luz calida difusa detras del contenido (feeling soleado, cottagecore) */
+.bg-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 18%,
+    rgba(255, 247, 230, 0.7) 0%,
+    rgba(255, 247, 230, 0) 58%
+  );
+}
+
+.float {
+  position: absolute;
+  animation-name: drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.bob {
+  animation-name: bob;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.sway {
+  animation-name: sway-rot;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.critter {
+  display: block;
+}
+
+/* Capas de profundidad: lejos = pequeno, borroso, tenue; cerca = grande, nitido */
+.float--far .critter {
+  width: 52px;
+  opacity: 0.1;
+  filter: blur(1.1px);
+}
+
+.float--mid .critter {
+  width: 74px;
+  opacity: 0.14;
+}
+
+.float--near .critter {
+  width: 104px;
+  opacity: 0.17;
+  will-change: transform;
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(3vw, -4vh);
+  }
+}
+
+@keyframes bob {
+  from {
+    transform: translateY(-7px);
+  }
+  to {
+    transform: translateY(7px);
+  }
+}
+
+@keyframes sway-rot {
+  from {
+    transform: rotate(-7deg);
+  }
+  to {
+    transform: rotate(7deg);
+  }
+}
+
+/* Conservadas: las usan loaders, doodles y el premio */
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translateY(-16px) rotate(var(--rot, 0deg));
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: translateX(0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translateX(14px) rotate(var(--rot, 0deg));
+  }
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: min(1080px, 92vw);
+  margin: 0 auto;
+  padding: 24px 0 64px;
+}
+
+.site-header {
+  text-align: center;
+  padding: 40px 0 8px;
+}
+
+.site-header h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.3rem, 6vw, 4rem);
+  margin: 8px 0 6px;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.site-header p {
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  margin: 0 auto;
+  max-width: 620px;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.paper {
+  position: relative;
+  background-color: var(--cream);
+  /* Grano de papel: dos capas de puntos desfasadas, sin imagen */
+  background-image: radial-gradient(
+      rgba(150, 120, 90, 0.05) 1px,
+      transparent 1px
+    ),
+    radial-gradient(rgba(150, 120, 90, 0.04) 1px, transparent 1px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 4px;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 1px rgba(90, 70, 50, 0.06),
+    0 12px 22px -10px rgba(120, 90, 70, 0.28), 0 10px 0 var(--shadow);
+  padding: 34px 28px 30px;
+  margin: 30px 0;
+}
+
+/* Inclinacion "hecha a mano": cada cuadro ladeado un pelin, alternado.
+   Al pasar el mouse se endereza, como si lo acomodaras. */
+.paper:nth-of-type(odd) {
+  transform: rotate(-0.5deg);
+}
+.paper:nth-of-type(even) {
+  transform: rotate(0.6deg);
+}
+.paper:hover {
+  transform: rotate(0deg) translateY(-2px);
+  transition: transform 0.3s ease;
+}
+
+/* Marco interior punteado de tiza, con temblor hecho a mano (filtro rough).
+   Mismo detalle imperfecto del cuadro del premio, pero en tono pastel de tinta.
+   Va solo en el borde decorativo, nunca sobre el texto, para no perder nitidez. */
+.paper::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 2px dashed var(--ink-soft);
+  border-radius: 10px;
+  opacity: 0.55;
+  pointer-events: none;
+  filter: url(#akira-rough);
+  z-index: 0;
+}
+
+/* Washi tape: una tira translucida y ladeada pegada arriba de cada cuadro.
+   La translucidez es lo que la hace leer como cinta. Colores rotan por cuadro. */
+.paper > .washi {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 118px;
+  height: 30px;
+  transform: translateX(-50%) rotate(-3deg);
+  z-index: 3;
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.22) 0 6px,
+      rgba(255, 255, 255, 0) 6px 12px
+    ),
+    linear-gradient(rgba(191, 227, 207, 0.8), rgba(150, 210, 185, 0.8));
+  box-shadow: 0 2px 5px rgba(90, 70, 50, 0.16);
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 5px,
+    #000 calc(100% - 5px),
+    transparent 100%
+  );
+  mask: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 5px,
+    #000 calc(100% - 5px),
+    transparent 100%
+  );
+}
+
+.paper:nth-of-type(even) > .washi {
+  transform: translateX(-50%) rotate(2.5deg);
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.22) 0 6px,
+      rgba(255, 255, 255, 0) 6px 12px
+    ),
+    linear-gradient(rgba(245, 205, 220, 0.8), rgba(240, 180, 205, 0.8));
+}
+
+.paper:nth-of-type(3n) > .washi {
+  background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.5) 1.5px,
+        transparent 2px
+      )
+      0 0 / 10px 10px,
+    linear-gradient(rgba(200, 190, 230, 0.82), rgba(180, 165, 220, 0.82));
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3.6vw, 2.1rem);
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.section-sub {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+/* Sketch frame wraps rough.js SVG borders behind content */
+.sketch {
+  position: relative;
+}
+
+.sketch > .sketch-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sketch > .sketch-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Numbers grid */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  flex: 1 1 150px;
+  text-align: center;
+  padding: 14px 10px;
+}
+
+.stat .num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.8rem;
+  display: block;
+  color: var(--ink);
+}
+
+.stat .lbl {
+  font-weight: 700;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
+  gap: 10px;
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: none;
+  background: transparent;
+  cursor: default;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+  padding: 0;
+}
+
+.cell .cell-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.cell .cell-num {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.cell.sold .cell-num {
+  color: #fff;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.cell.admin {
+  cursor: pointer;
+}
+
+.cell.admin:hover {
+  transform: translateY(-2px);
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 2px solid var(--ink-soft);
+}
+
+.dot.available {
+  background: var(--mint);
+}
+
+.dot.sold {
+  background: var(--sold);
+}
+
+/* Ticker: banda verde de borde a borde de la pantalla */
+.ticker-band {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: 8px;
+  margin-bottom: 26px;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 14px 0;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--mint) 0,
+    var(--mint) 22px,
+    var(--mint-soft) 22px,
+    var(--mint-soft) 44px
+  );
+  border-top: 3px solid var(--ink-soft);
+  border-bottom: 3px solid var(--ink-soft);
+  box-shadow: inset 0 0 22px rgba(91, 74, 99, 0.12);
+}
+
+/* Difuminado suave en los bordes izq/der para que entre y salga con gracia */
+.ticker-band::before,
+.ticker-band::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 70px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ticker-band::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--cream), transparent);
+}
+
+.ticker-band::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--cream), transparent);
+}
+
+.ticker-track {
+  display: inline-flex;
+  gap: 44px;
+  will-change: transform;
+  animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
+}
+
+/* Medidor: fuera de flujo e invisible, solo sirve para calcular el ancho de
+   una copia de la lista. No se anima ni ocupa espacio visible. */
+.ticker-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+  animation: none;
+  will-change: auto;
+}
+
+.ticker-band:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-item {
+  font-family: "Patrick Hand", var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ticker-doodle {
+  flex-shrink: 0;
+}
+
+/* Akira section */
+.akira {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 26px;
+  align-items: start;
+}
+
+.akira-body {
+  white-space: pre-wrap;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.photo-grid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 6px 0 var(--shadow);
+}
+
+.photo-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--ink-soft);
+  font-weight: 700;
+  padding: 30px 10px;
+}
+
+/* Payment */
+.pay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.pay-row {
+  padding: 14px 16px;
+}
+
+.pay-row .k {
+  font-weight: 800;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.pay-row .v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.steps {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding: 8px 0 8px 44px;
+  font-weight: 700;
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lavender);
+  border: 2px solid var(--ink-soft);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--ink);
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 12px 22px;
+  border: 2px solid var(--ink-soft);
+  border-radius: 12px;
+  background: var(--mint);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--shadow);
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--shadow);
+}
+
+.btn.secondary {
+  background: var(--lavender);
+}
+
+.btn.pink {
+  background: var(--pink);
+}
+
+.btn.ghost {
+  background: transparent;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 5px 0 var(--shadow);
+}
+
+.btn-whatsapp {
+  background: var(--mint);
+}
+
+/* Forms */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.field label {
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.input,
+.textarea {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+  padding: 11px 14px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  width: 100%;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--ink-soft);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.notice {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+
+.notice.err {
+  background: var(--pink-soft);
+  color: #a24a5c;
+  border: 2px solid var(--sold);
+}
+
+.notice.ok {
+  background: var(--mint-soft);
+  color: #2f7a52;
+  border: 2px solid var(--available);
+}
+
+.notice.info {
+  background: var(--lavender-soft);
+  color: var(--ink);
+  border: 2px solid var(--lavender);
+}
+
+/* Admin bar */
+.admin-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--lavender-soft);
+  border-bottom: 2px dashed var(--line);
+  padding: 10px 0;
+}
+
+.admin-bar .container {
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-bar .who {
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(91, 74, 99, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--cream);
+  border-radius: var(--radius);
+  box-shadow: 0 14px 0 var(--shadow);
+  padding: 26px 24px;
+  width: min(440px, 94vw);
+}
+
+.modal h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+
+.ticker-admin-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.ticker-admin-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.del-btn {
+  border: 2px solid var(--sold);
+  background: var(--pink-soft);
+  color: #a24a5c;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.footer {
+  text-align: center;
+  color: var(--ink-soft);
+  font-weight: 700;
+  padding: 30px 0 10px;
+}
+
+.footer a {
+  color: var(--ink);
+}
+
+.center {
+  text-align: center;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--ink-soft);
+  font-size: 1.2rem;
+}
+
+.thumb-editable {
+  position: relative;
+}
+
+.thumb-editable .thumb-del {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--sold);
+  background: #fff;
+  color: #a24a5c;
+  font-weight: 900;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* ---- Movimiento y detalles cute ---- */
+
+.heart-wrap {
+  display: inline-block;
+  animation: heartbeat 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1) rotate(-3deg);
+  }
+  25% {
+    transform: scale(1.12) rotate(3deg);
+  }
+  50% {
+    transform: scale(0.98) rotate(-2deg);
+  }
+}
+
+.site-header h1 {
+  animation: pop-in 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Las celdas de numero entran con un pequeno pop escalonado */
+.cell {
+  animation: cell-pop 0.4s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+@keyframes cell-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.cell.admin:hover {
+  transform: scale(1.12) rotate(-4deg);
+  z-index: 2;
+}
+
+.cell.sold .cell-num {
+  animation: stamp 0.35s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+@keyframes stamp {
+  0% {
+    transform: scale(1.8) rotate(-12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.9) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.btn {
+  transition: transform 0.1s cubic-bezier(0.2, 1.5, 0.4, 1),
+    box-shadow 0.1s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px) rotate(-1deg) scale(1.03);
+}
+
+.paper {
+  animation: fade-in 0.5s ease both;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.loading-cat {
+  display: block;
+  margin: 0 auto 14px;
+  width: 64px;
+  animation: floaty 2s ease-in-out infinite;
+}
+
+/* ---- Toggle de sonido ---- */
+.mute-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 15;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 10px 16px;
+  border: 2px solid var(--ink-soft);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--shadow);
+}
+
+.mute-toggle:hover {
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   Premio: cartel handmade tipo tiza sobre papel kraft
+   ============================================================ */
+.prize-card {
+  position: relative;
+  margin: 40px 0 26px;
+  padding: 44px 28px 30px;
+  text-align: center;
+  color: #fdf6ea;
+  border-radius: 18px;
+  /* Papel oscuro tipo pizarra con vineta calida */
+  background:
+    radial-gradient(140% 140% at 50% 30%, #6a5170 0%, #4a3a55 60%, #3b2e46 100%);
+  /* Grano de tiza superpuesto (SVG fractalNoise embebido, sutil) */
+  background-blend-mode: screen;
+  box-shadow: 0 12px 0 var(--shadow), inset 0 0 60px rgba(0, 0, 0, 0.25);
+  border: 3px solid #b79ec9;
+  overflow: hidden;
+  animation: rise 0.6s ease both;
+}
+
+.prize-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+}
+
+/* Marco interior de tiza, con borde tembloroso hecho a mano (filtro rough).
+   Se aplica solo al marco, no al texto, para no perder legibilidad. */
+.prize-card::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 2px dashed rgba(253, 246, 234, 0.55);
+  border-radius: 12px;
+  pointer-events: none;
+  filter: url(#akira-rough);
+}
+
+.prize-bunting {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.prize-kicker {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 0;
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+  color: #f3c9d4;
+}
+
+.prize-headline {
+  position: relative;
+  z-index: 1;
+  margin: 2px 0 0;
+  font-family: "Amatic SC", var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3rem, 9vw, 5rem);
+  line-height: 0.9;
+  color: #fdf6ea;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.6),
+    0 0 6px rgba(255, 255, 255, 0.25), 1px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.prize-amount-line {
+  position: relative;
+  z-index: 1;
+  margin: 18px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.prize-amount-big {
+  font-family: "Caveat", var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3.4rem, 12vw, 6rem);
+  line-height: 1;
+  color: #ffe6b0;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 10px rgba(255, 220, 150, 0.35), 2px 3px 0 rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  animation: prize-pulse 3s ease-in-out infinite;
+}
+
+@keyframes prize-pulse {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1deg);
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+  }
+}
+
+.prize-currency {
+  font-family: "Amatic SC", var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  color: #f3c9d4;
+  text-transform: uppercase;
+}
+
+.prize-note {
+  position: relative;
+  z-index: 1;
+  margin: 10px auto 20px;
+  max-width: 420px;
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 1.15rem;
+  color: #e7dcef;
+}
+
+.prize-progress {
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.prize-progress-track {
+  height: 22px;
+  border: 2px solid rgba(253, 246, 234, 0.85);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+.prize-progress-fill {
+  height: 100%;
+  min-width: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    #bfe3cf,
+    #bfe3cf 10px,
+    #f3c9d4 10px,
+    #f3c9d4 20px
+  );
+  background-size: 200% 100%;
+  border-radius: 999px;
+  transition: width 0.7s cubic-bezier(0.2, 1, 0.4, 1);
+  animation: stripe-move 1.2s linear infinite;
+}
+
+@keyframes stripe-move {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 0;
+  }
+}
+
+.prize-progress-label {
+  margin-top: 8px;
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 1.05rem;
+  color: #fdf6ea;
+}
+
+/* Doodles dispersos, cada uno flotando distinto. El filtro rough les da
+   trazo hecho a mano (aqui si conviene, son decorativos). */
+.doodle {
+  position: absolute;
+  z-index: 1;
+  filter: url(#akira-rough);
+  animation: floaty 6s ease-in-out infinite;
+}
+
+.doodle-1 {
+  top: 30px;
+  left: 24px;
+  --rot: -12deg;
+  animation-delay: 0s;
+}
+.doodle-2 {
+  top: 60px;
+  right: 30px;
+  --rot: 14deg;
+  animation-delay: 1.2s;
+}
+.doodle-3 {
+  bottom: 40px;
+  left: 34px;
+  --rot: 8deg;
+  animation-delay: 0.6s;
+}
+.doodle-4 {
+  bottom: 60px;
+  right: 28px;
+  --rot: -10deg;
+  animation-delay: 2s;
+}
+.doodle-5 {
+  top: 96px;
+  left: 50%;
+  --rot: 6deg;
+  animation-delay: 1.6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prize-amount-big,
+  .doodle,
+  .prize-progress-fill,
+  .prize-card,
+  .heart-wrap,
+  .cell,
+  .cell.sold .cell-num,
+  .paper,
+  .loading-cat,
+  .float,
+  .bob,
+  .sway,
+  .ticker-track,
+  .site-header h1 {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .akira {
+    grid-template-columns: 1fr;
+  }
+  .prize-card {
+    padding: 40px 16px 26px;
+  }
+  .doodle-1,
+  .doodle-3 {
+    left: 8px;
+  }
+  .doodle-2,
+  .doodle-4 {
+    right: 8px;
+  }
+}
