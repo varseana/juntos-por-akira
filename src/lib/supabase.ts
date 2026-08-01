@@ -22,7 +22,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export const RAFFLE_ID = "akira";
 export const TOTAL_NUMBERS = 300;
 export const PRICE_PER_NUMBER = 1000;
-export const PRIZE_AMOUNT = 50000;
+// Premio en dolares. Se muestra con un asterisco: el pago se ajusta a colones
+// al tipo de cambio del dia de la transferencia.
+export const PRIZE_AMOUNT_USD = 100;
+export const PRIZE_NOTE = "Se ajusta a colones al hacer la transferencia";
 export const SINPE_NUMBER = "506 8556 9584";
 export const SINPE_NAME = "Sean Alexander Vargas Romero";
 export const WHATSAPP_NUMBER = "50685569584";

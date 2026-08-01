@@ -562,6 +562,84 @@ body {
   padding: 30px 10px;
 }
 
+/* Pila de fotos con profundidad (galeria de Akira) */
+.photo-deck {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  cursor: pointer;
+  outline: none;
+}
+
+.photo-deck.single {
+  cursor: default;
+}
+
+.deck-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 6px solid #fff;
+  box-shadow: 0 8px 20px -6px rgba(120, 90, 70, 0.5);
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 1s ease, filter 1s ease;
+  will-change: transform, opacity;
+  background: var(--cream);
+}
+
+.photo-deck.single .deck-photo {
+  position: relative;
+}
+
+.deck-photo.pos-0 {
+  transform: translate(0, 0) scale(1) rotate(-2deg);
+  z-index: 3;
+  opacity: 1;
+  filter: brightness(1);
+}
+.deck-photo.pos-1 {
+  transform: translate(26px, 18px) scale(0.92) rotate(3deg);
+  z-index: 2;
+  opacity: 0.85;
+  filter: brightness(0.9);
+}
+.deck-photo.pos-2 {
+  transform: translate(-22px, 26px) scale(0.85) rotate(-5deg);
+  z-index: 1;
+  opacity: 0.7;
+  filter: brightness(0.82);
+}
+/* la del frente se eleva en un arco antes de irse al fondo */
+.deck-photo.leaving {
+  z-index: 4;
+  transform: translate(0, -40px) scale(1.04) rotate(-2deg);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.5s,
+    filter 0.5s;
+}
+
+.deck-hint {
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  z-index: 5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck-photo {
+    transition: none !important;
+  }
+}
+
 /* Payment */
 .pay-grid {
   display: grid;
@@ -1113,6 +1191,70 @@ body {
   }
 }
 
+/* Monto + asterisco alineados en una fila */
+.prize-amount-wrap {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Asterisco pulsante que muestra un globo al pasar el mouse o tocar */
+.prize-ast {
+  position: relative;
+  font-family: "Baloo 2", var(--font-display);
+  font-weight: 800;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: #ffe6b0;
+  background: none;
+  border: none;
+  cursor: help;
+  padding: 4px;
+  margin-top: 6px;
+  animation: prize-pulse 1.8s ease-in-out infinite;
+}
+
+.prize-tip {
+  position: absolute;
+  bottom: 128%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  width: max-content;
+  max-width: 240px;
+  background: #fff;
+  color: var(--ink);
+  font-family: "Patrick Hand", var(--font-body);
+  font-weight: 400;
+  font-size: 0.98rem;
+  line-height: 1.25;
+  text-align: center;
+  padding: 9px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--ink-soft);
+  box-shadow: 0 6px 0 var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 5;
+}
+
+.prize-tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: #fff;
+}
+
+.prize-ast:hover .prize-tip,
+.prize-ast:focus-visible .prize-tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .prize-currency {
   font-family: "Amatic SC", var(--font-display);
   font-weight: 700;
@@ -1233,6 +1375,7 @@ body {
   .bob,
   .sway,
   .ticker-track,
+  .prize-ast,
   .site-header h1 {
     animation: none !important;
   }

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { PRIZE_AMOUNT, TOTAL_NUMBERS } from "../lib/supabase";
+import { PRIZE_AMOUNT_USD, PRIZE_NOTE, TOTAL_NUMBERS } from "../lib/supabase";
 import type { RaffleNumber } from "../lib/types";
 import { Annotate } from "./Annotate";
 import { Bunting, Heart, Leaf, Sparkle, Star } from "./Doodles";
@@ -40,12 +40,29 @@ export function PrizeBanner({ numbers }: PrizeBannerProps) {
       </h2>
 
       <div className="prize-amount-line">
-        <Annotate type="circle" color="#8a6d9c" strokeWidth={2.6} padding={12} delay={700}>
-          <span className="prize-amount-big">
-            {PRIZE_AMOUNT.toLocaleString("es-CR")}
-          </span>
-        </Annotate>
-        <span className="prize-currency">colones</span>
+        <span className="prize-amount-wrap">
+          <Annotate
+            type="circle"
+            color="#8a6d9c"
+            strokeWidth={2.6}
+            padding={12}
+            delay={700}
+          >
+            <span className="prize-amount-big">${PRIZE_AMOUNT_USD}</span>
+          </Annotate>
+          {/* Asterisco pulsante con globo al pasar el mouse (o tocar) */}
+          <button
+            type="button"
+            className="prize-ast"
+            aria-label={PRIZE_NOTE}
+          >
+            *
+            <span className="prize-tip" role="tooltip">
+              {PRIZE_NOTE}
+            </span>
+          </button>
+        </span>
+        <span className="prize-currency">dolares</span>
       </div>
 
       <p className="prize-note">

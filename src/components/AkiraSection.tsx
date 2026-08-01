@@ -6,6 +6,7 @@ import {
 } from "../lib/supabase";
 import type { AkiraContent } from "../lib/types";
 import { SketchBox } from "./SketchBox";
+import { PhotoDeck } from "./PhotoDeck";
 
 interface AkiraSectionProps {
   content: AkiraContent | null;
@@ -116,22 +117,13 @@ export function AkiraSection({
           </div>
           <div className="akira" style={{ marginTop: 12 }}>
             <div className="akira-body">{content.body}</div>
-            <div className="photo-grid">
-              {content.photos.length === 0 ? (
-                <div className="photo-empty">
-                  Pronto agregaremos fotos de Akira aqui.
-                </div>
-              ) : (
-                content.photos.map((url) => (
-                  <img
-                    key={url}
-                    src={url}
-                    alt="Foto de Akira"
-                    loading="lazy"
-                  />
-                ))
-              )}
-            </div>
+            {content.photos.length === 0 ? (
+              <div className="photo-empty">
+                Pronto agregaremos fotos de Akira aqui.
+              </div>
+            ) : (
+              <PhotoDeck photos={content.photos} />
+            )}
           </div>
         </>
       ) : (
