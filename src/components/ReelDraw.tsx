@@ -154,10 +154,11 @@ export function ReelDraw({ numbers, isAdmin }: ReelDrawProps) {
 
   return (
     <SketchBox className="paper" fill="#d9efe2" seed={91} washi>
-      <h2 className="section-title">El carril de la suerte</h2>
-      <p className="section-sub">
-        Los 300 numeros pasando en desorden. Los que ya tienen dueno llevan el
-        nombre de su persona.
+      <h2 className="section-title" style={{ textAlign: "center" }}>
+        El carril de la suerte
+      </h2>
+      <p className="section-sub" style={{ textAlign: "center" }}>
+        Seras uno de los afortunados en ayudar a Akira?
       </p>
 
       <div className="reel" ref={hostRef}>
