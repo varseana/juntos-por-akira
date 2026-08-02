@@ -80,6 +80,26 @@ export function Leaf({ size = 24, className, color = "#8a6d9c" }: DoodleProps) {
   );
 }
 
+/** Huella de gato, en trazo de lapiz. */
+export function Paw({ size = 20, className, color = "#8a6d9c" }: DoodleProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      {...base(color)}
+      strokeWidth={1.8}
+    >
+      <ellipse cx="7.5" cy="9" rx="2.1" ry="2.6" />
+      <ellipse cx="12" cy="7" rx="2.1" ry="2.6" />
+      <ellipse cx="16.5" cy="9" rx="2.1" ry="2.6" />
+      <path d="M12 13c-3 0-5 2.2-5 4.3S9.2 20 12 20s5-.6 5-2.7S15 13 12 13z" />
+    </svg>
+  );
+}
+
 /** Guirnalda de banderines (bunting) para colgar sobre un titulo. */
 export function Bunting({
   className,

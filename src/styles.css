@@ -13,6 +13,7 @@
   --line: #c9b6a3;
   --sold: #d98a9a;
   --available: #8fc9a6;
+  --gold: #e0b64a;
   --shadow: rgba(91, 74, 99, 0.16);
   --radius: 14px;
   --font-display: "Baloo 2", "Trebuchet MS", sans-serif;
@@ -401,6 +402,80 @@ body {
 
 .cell.admin:hover {
   transform: translateY(-2px);
+}
+
+/* Globo sutil con el dueno del numero. Aparece solo al pasar el mouse sobre un
+   numero vendido y no roba clics. */
+.cell-owner {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: max-content;
+  max-width: 190px;
+  padding: 7px 12px 8px;
+  background: var(--cream);
+  border: 2px solid var(--ink-soft);
+  border-radius: 12px;
+  box-shadow: 0 6px 14px -6px rgba(120, 90, 70, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  pointer-events: none;
+  z-index: 6;
+  line-height: 1.2;
+}
+
+.cell-owner::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -6px 0 0 -5px;
+  background: var(--cream);
+  border-right: 2px solid var(--ink-soft);
+  border-bottom: 2px solid var(--ink-soft);
+  transform: rotate(45deg);
+}
+
+.cell-owner-k {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.cell-owner-v {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: normal;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* El numero con el mouse encima sube de capa para que su globo no quede tapado
+   por las celdas que vienen despues en el orden del DOM. */
+.cell.sold:hover,
+.cell.sold:focus-visible {
+  z-index: 5;
+}
+
+.cell.sold:hover .cell-owner,
+.cell.sold:focus-visible .cell-owner {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
 }
 
 .legend {
@@ -1361,6 +1436,586 @@ body {
   animation-delay: 1.6s;
 }
 
+/* ==========================================================================
+   Muro de donaciones: papelitos pegados con washi tape, ladeados a mano
+   ========================================================================== */
+.don-head {
+  text-align: center;
+  margin: 4px 0 22px;
+}
+
+.don-total {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
+  color: #b06a2c;
+  line-height: 1.1;
+}
+
+.don-count {
+  display: block;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.don-wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 26px 20px;
+  padding: 6px 0 8px;
+}
+
+.don-note {
+  position: relative;
+  padding: 24px 16px 34px;
+  border-radius: 3px;
+  box-shadow: 0 8px 16px -6px rgba(120, 90, 70, 0.4);
+  transition: transform 0.25s ease;
+}
+
+/* Papelitos de colores y giros alternados, como pegados uno por uno */
+.don-note:nth-child(4n + 1) {
+  background: #fdf0d6;
+  transform: rotate(-1.6deg);
+}
+.don-note:nth-child(4n + 2) {
+  background: #f9dfe6;
+  transform: rotate(1.4deg);
+}
+.don-note:nth-child(4n + 3) {
+  background: #dcefe0;
+  transform: rotate(-1deg);
+}
+.don-note:nth-child(4n) {
+  background: #e6ddf3;
+  transform: rotate(2deg);
+}
+
+.don-note:hover {
+  transform: rotate(0deg) translateY(-4px);
+  z-index: 2;
+}
+
+/* La cinta washi que lo sostiene arriba */
+.don-note::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 92px;
+  height: 24px;
+  transform: translateX(-50%) rotate(-4deg);
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.3) 0 5px,
+      rgba(255, 255, 255, 0) 5px 10px
+    ),
+    rgba(191, 227, 207, 0.85);
+  box-shadow: 0 2px 4px rgba(90, 70, 50, 0.18);
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    #000 6px,
+    #000 calc(100% - 6px),
+    transparent
+  );
+  mask: linear-gradient(
+    90deg,
+    transparent,
+    #000 6px,
+    #000 calc(100% - 6px),
+    transparent
+  );
+}
+
+.don-note:nth-child(even)::before {
+  transform: translateX(-50%) rotate(3.5deg);
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.3) 0 5px,
+      rgba(255, 255, 255, 0) 5px 10px
+    ),
+    rgba(245, 205, 220, 0.85);
+}
+
+.don-note:nth-child(3n)::before {
+  background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.55) 1.5px,
+        transparent 2px
+      )
+      0 0 / 9px 9px,
+    rgba(200, 190, 230, 0.88);
+}
+
+.don-paw {
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  opacity: 0.45;
+  line-height: 0;
+}
+
+.don-quote {
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 1.16rem;
+  color: var(--ink);
+  margin: 10px 0 10px;
+}
+
+.don-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--ink);
+  margin: 0;
+}
+
+.don-amt {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.32rem;
+  color: #b06a2c;
+  margin: 2px 0 0;
+}
+
+.don-heart {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  font-size: 1.2rem;
+}
+
+.don-del {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--ink-soft);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  font-weight: 800;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.don-del:hover {
+  background: var(--sold);
+  color: #fff;
+}
+
+.don-form {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 2px dashed var(--line);
+}
+
+.don-form-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.don-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0 16px;
+  align-items: end;
+}
+
+/* ==========================================================================
+   Panel de seguimiento
+   ========================================================================== */
+.modal-wide {
+  max-width: 860px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.92rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--ink-soft);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.tab.on {
+  background: var(--lavender);
+  color: var(--ink);
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 4px 0 14px;
+}
+
+.chip-row.tight {
+  margin: 0;
+  gap: 4px;
+}
+
+.chip {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.84rem;
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: 2px solid var(--ink-soft);
+  color: var(--ink);
+}
+
+.chip-ok {
+  background: var(--mint-soft);
+}
+
+.chip-bad {
+  background: var(--pink);
+  text-decoration: line-through;
+}
+
+.chip-btn {
+  cursor: pointer;
+}
+
+.chip-btn:hover:not(:disabled) {
+  background: var(--sold);
+  color: #fff;
+}
+
+.chip-total {
+  font-weight: 800;
+  color: #b06a2c;
+  margin-left: 4px;
+}
+
+.thanks-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  margin: 6px 0 12px;
+  border-radius: 12px;
+  border: 2px dashed var(--ink-soft);
+  background: var(--lavender-soft);
+}
+
+.thanks-lbl {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.thanks-text {
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.track-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 18px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.track-stats strong {
+  color: var(--ink);
+}
+
+.table-wrap {
+  max-height: 46vh;
+  overflow: auto;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: #fffdf7;
+}
+
+.track-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.track-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--beige);
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--line);
+  white-space: nowrap;
+}
+
+.track-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(201, 182, 163, 0.5);
+  vertical-align: top;
+}
+
+.track-table tbody tr:nth-child(even) {
+  background: rgba(244, 231, 211, 0.4);
+}
+
+.track-table .mono {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.track-table .empty-row {
+  text-align: center;
+  color: var(--ink-soft);
+  font-weight: 700;
+  padding: 22px;
+}
+
+/* ==========================================================================
+   Carril de la suerte
+   ========================================================================== */
+.reel {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 0;
+  border-radius: 14px;
+  border: 2px dashed var(--ink-soft);
+  background: rgba(255, 253, 247, 0.72);
+}
+
+.reel-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* La tira en reposo lleva dos copias identicas del mismo orden. Recorrer el
+   50% del ancho total deja la segunda copia exactamente donde estaba la
+   primera, asi el ciclo se repite sin costura ni huecos blancos. */
+.reel-idle {
+  animation-name: reel-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes reel-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.reel:hover .reel-idle {
+  animation-play-state: paused;
+}
+
+/* El separador va como margen de cada tarjeta, no como gap, para que el ancho
+   de una copia sea exactamente cantidad * (96 + 12) y calce con ReelDraw.tsx. */
+.reel-card {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 92px;
+  margin-right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 6px;
+  border-radius: 12px;
+  border: 2.4px solid var(--ink);
+  background: var(--mint);
+  box-shadow: 0 4px 0 var(--shadow);
+}
+
+.reel-card.sold {
+  background: var(--sold);
+}
+
+.reel-n {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.55rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.reel-card.sold .reel-n {
+  color: #fff;
+}
+
+.reel-name {
+  font-family: "Patrick Hand", var(--font-body);
+  font-size: 0.76rem;
+  line-height: 1.12;
+  text-align: center;
+  color: var(--ink);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.reel-card.sold .reel-name {
+  color: #fff8f8;
+}
+
+.reel-card.win {
+  animation: reel-win 0.5s ease-out 3;
+  box-shadow: 0 0 0 4px var(--gold), 0 6px 0 var(--shadow);
+}
+
+@keyframes reel-win {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    transform: scale(1.08) rotate(-2deg);
+  }
+  70% {
+    transform: scale(1.05) rotate(2deg);
+  }
+}
+
+/* Marca del centro: donde cae la tarjeta ganadora */
+.reel-marker {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 50%;
+  width: 0;
+  border-left: 2px dashed var(--ink-soft);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Difuminado a los lados para que el carril no corte en seco */
+.reel-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 56px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.reel-fade.left {
+  left: 0;
+  background: linear-gradient(90deg, #dcefe0, rgba(220, 239, 224, 0));
+}
+
+.reel-fade.right {
+  right: 0;
+  background: linear-gradient(270deg, #dcefe0, rgba(220, 239, 224, 0));
+}
+
+.reel-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.conf {
+  position: absolute;
+  top: 42%;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--pink);
+  animation: conf-fly 1.1s ease-out forwards;
+}
+
+.conf:nth-child(3n) {
+  background: var(--mint);
+}
+.conf:nth-child(3n + 1) {
+  background: var(--lavender);
+}
+.conf:nth-child(5n) {
+  background: #e0b64a;
+}
+
+@keyframes conf-fly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), -90px) rotate(var(--rot));
+  }
+}
+
+.reel-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 16px;
+}
+
+.reel-result-k {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.reel-result-v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--ink);
+  text-align: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .prize-amount-big,
   .doodle,
@@ -1376,14 +2031,35 @@ body {
   .sway,
   .ticker-track,
   .prize-ast,
+  .reel-idle,
+  .reel-card.win,
+  .conf,
   .site-header h1 {
     animation: none !important;
+  }
+  .don-note {
+    transform: none;
+  }
+  .reel-confetti {
+    display: none;
   }
 }
 
 @media (max-width: 720px) {
   .akira {
     grid-template-columns: 1fr;
+  }
+  .don-wall {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 24px 14px;
+  }
+  /* El ancho de tarjeta no cambia: el centrado del sorteo depende de que
+     coincida con CARD_W en ReelDraw.tsx. Solo se recorta el difuminado. */
+  .reel-fade {
+    width: 34px;
+  }
+  .cell-owner {
+    max-width: 150px;
   }
   .prize-card {
     padding: 40px 16px 26px;

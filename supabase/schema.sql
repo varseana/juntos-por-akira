@@ -37,6 +37,14 @@ create table if not exists public.raffle_numbers (
   updated_at timestamptz not null default now()
 );
 
+-- Telefono de quien compro el numero. Sirve para agrupar los numeros de una
+-- misma persona en el panel de seguimiento. Solo lo ve el admin en la tabla.
+alter table public.raffle_numbers
+  add column if not exists buyer_phone text;
+
+create index if not exists raffle_numbers_buyer_phone_idx
+  on public.raffle_numbers (buyer_phone);
+
 -- Sembrar los 300 numeros. No sobrescribe filas existentes.
 insert into public.raffle_numbers (n)
 select generate_series(1, 300)
@@ -73,6 +81,17 @@ values (
 on conflict (id) do nothing;
 
 -- ---------------------------------------------------------------------------
+-- 4b. Donaciones: personas que aportaron sin comprar numeros.
+-- ---------------------------------------------------------------------------
+create table if not exists public.donations (
+  id uuid primary key default gen_random_uuid(),
+  donor_name text not null check (char_length(trim(donor_name)) between 1 and 80),
+  amount integer not null check (amount > 0),
+  message text not null default '' check (char_length(message) <= 200),
+  created_at timestamptz not null default now()
+);
+
+-- ---------------------------------------------------------------------------
 -- 5. Trigger para mantener updated_at al dia en cada UPDATE.
 -- ---------------------------------------------------------------------------
 create or replace function public.touch_updated_at()
@@ -102,6 +121,7 @@ alter table public.admins enable row level security;
 alter table public.raffle_numbers enable row level security;
 alter table public.ticker_messages enable row level security;
 alter table public.akira_content enable row level security;
+alter table public.donations enable row level security;
 
 -- admins: nadie la lee ni la escribe desde el cliente. Solo la funcion
 -- is_admin() (SECURITY DEFINER) y el service_role la tocan. Sin politicas
@@ -156,6 +176,32 @@ create policy akira_update_admin
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());
+
+-- donations
+drop policy if exists donations_select_public on public.donations;
+create policy donations_select_public
+  on public.donations for select
+  to anon, authenticated
+  using (true);
+
+drop policy if exists donations_insert_admin on public.donations;
+create policy donations_insert_admin
+  on public.donations for insert
+  to authenticated
+  with check (public.is_admin());
+
+drop policy if exists donations_update_admin on public.donations;
+create policy donations_update_admin
+  on public.donations for update
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+drop policy if exists donations_delete_admin on public.donations;
+create policy donations_delete_admin
+  on public.donations for delete
+  to authenticated
+  using (public.is_admin());
 
 -- ---------------------------------------------------------------------------
 -- 7. Storage: bucket publico de lectura para las fotos de Akira.
@@ -215,5 +261,12 @@ begin
       and tablename = 'akira_content'
   ) then
     alter publication supabase_realtime add table public.akira_content;
+  end if;
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public'
+      and tablename = 'donations'
+  ) then
+    alter publication supabase_realtime add table public.donations;
   end if;
 end $$;

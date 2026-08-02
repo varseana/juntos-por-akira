@@ -40,8 +40,11 @@ export function NumberCell({
     svg.appendChild(node);
   }, [sold, item.n]);
 
+  const owner = item.buyer_name?.trim() ?? "";
   const label = sold
-    ? `Numero ${item.n}, vendido`
+    ? owner
+      ? `Numero ${item.n}, vendido a ${owner}`
+      : `Numero ${item.n}, vendido`
     : `Numero ${item.n}, disponible`;
 
   return (
@@ -52,14 +55,22 @@ export function NumberCell({
       onMouseEnter={() => {
         if (isAdmin && !busy) playPop();
       }}
-      disabled={busy || !isAdmin}
+      // Solo se deshabilita mientras guarda. Si se deshabilitara para el
+      // publico, algunos navegadores dejarian de entregar el hover y el globo
+      // con el nombre del dueno nunca apareceria.
+      disabled={busy}
+      aria-disabled={!isAdmin}
       aria-label={label}
+      // El nombre del dueno se muestra con el globo propio (.cell-owner), no
+      // con el title nativo, para no duplicar el mismo dato al pasar el mouse.
       title={
         isAdmin
           ? sold
             ? "Marcar como disponible"
             : "Marcar como vendido"
-          : label
+          : sold && owner
+            ? undefined
+            : label
       }
       style={{ animationDelay: `${Math.min(index * 6, 600)}ms` }}
     >
@@ -73,6 +84,13 @@ export function NumberCell({
         aria-hidden="true"
       />
       <span className="cell-num">{item.n}</span>
+      {/* Globo sutil con el dueno del numero. Solo en los vendidos con nombre. */}
+      {sold && owner && (
+        <span className="cell-owner" aria-hidden="true">
+          <span className="cell-owner-k">Dueno</span>
+          <span className="cell-owner-v">{owner}</span>
+        </span>
+      )}
     </button>
   );
 }

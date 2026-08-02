@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
-import type { AkiraContent, RaffleNumber, TickerMessage } from "../lib/types";
+import type {
+  AkiraContent,
+  Donation,
+  RaffleNumber,
+  TickerMessage,
+} from "../lib/types";
 
 interface RaffleData {
   numbers: RaffleNumber[];
   ticker: TickerMessage[];
   akira: AkiraContent | null;
+  donations: Donation[];
   loading: boolean;
   error: string | null;
   reload: () => Promise<void>;
@@ -15,18 +21,23 @@ export function useRaffleData(): RaffleData {
   const [numbers, setNumbers] = useState<RaffleNumber[]>([]);
   const [ticker, setTicker] = useState<TickerMessage[]>([]);
   const [akira, setAkira] = useState<AkiraContent | null>(null);
+  const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mounted = useRef(true);
 
   const reload = useCallback(async () => {
-    const [numRes, tickRes, akiraRes] = await Promise.all([
+    const [numRes, tickRes, akiraRes, donRes] = await Promise.all([
       supabase.from("raffle_numbers").select("*").order("n"),
       supabase
         .from("ticker_messages")
         .select("*")
         .order("created_at", { ascending: false }),
       supabase.from("akira_content").select("*").eq("id", "akira").single(),
+      supabase
+        .from("donations")
+        .select("*")
+        .order("created_at", { ascending: false }),
     ]);
 
     if (!mounted.current) return;
@@ -39,6 +50,7 @@ export function useRaffleData(): RaffleData {
     }
     if (!tickRes.error) setTicker((tickRes.data as TickerMessage[]) ?? []);
     if (!akiraRes.error) setAkira((akiraRes.data as AkiraContent) ?? null);
+    if (!donRes.error) setDonations((donRes.data as Donation[]) ?? []);
   }, []);
 
   useEffect(() => {
@@ -65,6 +77,11 @@ export function useRaffleData(): RaffleData {
         { event: "*", schema: "public", table: "akira_content" },
         () => reload()
       )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "donations" },
+        () => reload()
+      )
       .subscribe();
 
     return () => {
@@ -73,5 +90,5 @@ export function useRaffleData(): RaffleData {
     };
   }, [reload]);
 
-  return { numbers, ticker, akira, loading, error, reload };
+  return { numbers, ticker, akira, donations, loading, error, reload };
 }

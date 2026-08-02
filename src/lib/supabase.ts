@@ -31,6 +31,18 @@ export const SINPE_NAME = "Sean Alexander Vargas Romero";
 export const WHATSAPP_NUMBER = "50685569584";
 export const AKIRA_PHOTOS_BUCKET = "akira-photos";
 
+/**
+ * Plantillas de agradecimiento. Se llenan con el nombre de la persona y un
+ * emoji de manos o corazon elegido al azar al momento de registrar la compra.
+ */
+export const THANKS_TEMPLATES = [
+  "Gracias {nombre} por tu granito de arena",
+  "Gracias por el apoyo {nombre}",
+  "Gracias de corazon {nombre}",
+] as const;
+
+export const THANKS_EMOJIS = ["🙏", "🤲", "💜", "❤️", "🩷", "💖"] as const;
+
 // Ruta secreta del panel de administracion. El panel solo aparece si visitas
 // la pagina con este hash al final de la URL, por ejemplo:
 //   https://tu-sitio.com/#/panel-akira-8f3k29

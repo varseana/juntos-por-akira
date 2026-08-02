@@ -163,3 +163,80 @@ gata (le remueven todos los dientes).
 ## Reglas de estilo de escritura (recordatorio)
 
 - Cero emojis. Sin em-dashes ni guiones largos. Espanol, tono calido.
+
+## Seguimiento, sorteo, donaciones y dueno del numero (2026-08-02)
+
+Se implementaron en la app real (ya no son machotes HTML). El machote
+public/donaciones.html se borro porque su contenido paso a codigo.
+
+### Base de datos (supabase/schema.sql, idempotente)
+- raffle_numbers gana columna `buyer_phone text` (alter table add column if not
+  exists) + indice. Agrupa los numeros de una misma persona.
+- Tabla nueva `donations` (id uuid, donor_name, amount integer > 0, message,
+  created_at). RLS: select publico; insert/update/delete solo con is_admin().
+  Agregada a la publicacion supabase_realtime.
+- supabase/seed-compradores.sql carga los 34 numeros de 13 personas, sus
+  mensajes de ticker y las 2 donaciones. Idempotente (where not exists).
+  Los telefonos quedan en null hasta que la persona escriba.
+
+### Lista final de compradores (resuelta con el usuario)
+Amanda 5 | Jeremy Andrey Villa 3,28 | Jessica Vanessa Arias 9,26 |
+Katherine Valeria 30,146,177,260 (cambio el 7 por el 177) | Luis Vasquez 15,99 |
+Meiling 206 | Miranda Villalobos 8,84 | Montero 56,57,59,65,67 |
+Nazaret Godinez 25,77,89,197,222 | Ramirez Barrantes M 7,19 |
+Rowdy 95,111,178,282 | Tania 4,22,27 | Victor 20,21,23 (el 19 quedo para
+Ramirez Barrantes M, a Victor se le asigno el 23).
+Donaciones: Angelo David Blando 5000 "con mucho amor";
+Nunez Bosa Juan 2000 "para Akira de Felix".
+
+### Dueno del numero al pasar el mouse
+NumberCell.tsx: los vendidos con nombre muestran un globo .cell-owner arriba
+("DUENO" en mayusculas chicas + nombre). Sutil, con flecha, sin robar clics.
+La celda deja de estar `disabled` para el publico (aria-disabled en su lugar):
+un boton disabled no entrega hover en varios navegadores y el globo no saldria.
+Se quita el title nativo cuando hay globo para no duplicar el dato.
+.cell.sold:hover sube z-index a 5 para que las celdas siguientes no lo tapen.
+
+### Panel de seguimiento (TrackingPanel.tsx, solo admin)
+Se abre desde la barra de admin con "Registrar compras". Dos pestanas:
+- Registrar: telefono + nombre + numeros ("25, 77, 89"). Si el telefono ya
+  existe, detecta a la persona y los numeros nuevos se AGREGAN a los que tenia.
+  Chips verdes/rosados marcan validos vs ya vendidos a otro (esos no se toman).
+  Vista previa del agradecimiento y check para mandarlo al ticker sin duplicar.
+- Tabla: hoja de calculo con buscador por nombre, telefono o numero, resumen de
+  totales, boton "Copiar tabla" (TSV al portapapeles, pegable en Sheets/Excel) y
+  cada numero es un boton que lo libera.
+Helpers en src/lib/buyers.ts: normalizePhone, formatPhone, groupBuyers,
+findBuyerByPhone, buildThanks, parseNumberList.
+
+### Mensajes de agradecimiento
+THANKS_TEMPLATES en supabase.ts, las 3 que pidio el usuario:
+"Gracias {nombre} por tu granito de arena", "Gracias por el apoyo {nombre}",
+"Gracias de corazon {nombre}". THANKS_EMOJIS = manos y corazones. Excepcion
+consciente a la regla de cero emojis: el usuario los pidio explicitamente.
+buildThanks() elige plantilla y emoji por hash del nombre, no al azar, para que
+la vista previa y lo guardado coincidan.
+
+### Carril de la suerte (ReelDraw.tsx)
+Sorteo A. Los 300 numeros en orden aleatorio (Fisher-Yates), cada tarjeta con su
+numero y el nombre del dueno si esta vendido.
+- En reposo: animacion CSS pura sobre DOS copias identicas de la tira,
+  translate3d(0) a translate3d(-50%). Sin costura, sin huecos, sin JS por frame.
+  Arranque en punto aleatorio via animation-delay negativo. Pausa en hover.
+  IMPORTANTE: el separador va como margin-right de .reel-card, no como gap, para
+  que el ancho de una copia sea exactamente cantidad*(96+12) y calce con
+  CARD_W/GAP en el TSX. No cambiar el ancho de tarjeta en el media query.
+- El boton "Escoger ganador" SOLO aparece con sesion de admin. El publico
+  unicamente ve el carril moverse (lo pidio asi el usuario).
+- Al girar: tira guiada con SPIN_LEAD=46 tarjetas antes de la ganadora y
+  SPIN_TAIL=12 despues, para que la ganadora nunca quede sin nada a la derecha.
+  cubic-bezier de desaceleracion, 5.2s, confeti CSS y playSuccess al terminar.
+
+### Muro de donaciones (DonationsWall.tsx)
+Version elegida: Muro A1, papelitos con washi tape girados a mano. Papelitos de
+4 colores alternados con rotaciones distintas (nth-child 4n), se enderezan en
+hover, cinta washi translucida arriba con extremos deshilachados (mask), huella
+de gato tenue en la esquina y corazon abajo a la derecha. Encabezado con el total
+en colones y el conteo de personas. El admin agrega y quita desde el mismo
+cuadro. Si no hay donaciones y no hay sesion, la seccion no se renderiza.
+Doodles.tsx gana el componente Paw (huella en trazo de lapiz).

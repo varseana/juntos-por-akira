@@ -12,15 +12,20 @@ import { PrizeBanner } from "./components/PrizeBanner";
 import { TextureDefs } from "./components/TextureDefs";
 import { LoginModal } from "./components/LoginModal";
 import { TickerManager } from "./components/TickerManager";
+import { TrackingPanel } from "./components/TrackingPanel";
+import { DonationsWall } from "./components/DonationsWall";
+import { ReelDraw } from "./components/ReelDraw";
 import { SketchBox } from "./components/SketchBox";
 import { ADMIN_SECRET_PATH, SINPE_NUMBER } from "./lib/supabase";
 import { getMuted, playPop, setMuted } from "./lib/sfx";
 
 export default function App() {
   const { isAdmin, loading: authLoading, signOut } = useAuth();
-  const { numbers, ticker, akira, loading, error, reload } = useRaffleData();
+  const { numbers, ticker, akira, donations, loading, error, reload } =
+    useRaffleData();
   const route = useHashRoute();
   const [showTicker, setShowTicker] = useState(false);
+  const [showTracking, setShowTracking] = useState(false);
   const [muted, setMutedState] = useState(getMuted());
 
   // El acceso de admin solo existe si la URL tiene el hash secreto.
@@ -43,6 +48,15 @@ export default function App() {
           <div className="container">
             <span className="who">Modo administracion activo</span>
             <div className="row">
+              <button
+                className="btn"
+                onClick={() => {
+                  playPop();
+                  setShowTracking(true);
+                }}
+              >
+                Registrar compras
+              </button>
               <button
                 className="btn secondary"
                 onClick={() => {
@@ -131,6 +145,12 @@ export default function App() {
               isAdmin={isAdmin}
               onChanged={reload}
             />
+            <ReelDraw numbers={numbers} isAdmin={isAdmin} />
+            <DonationsWall
+              donations={donations}
+              isAdmin={isAdmin}
+              onChanged={reload}
+            />
             <PaymentSection />
           </>
         )}
@@ -152,6 +172,13 @@ export default function App() {
         <TickerManager
           messages={ticker}
           onClose={() => setShowTicker(false)}
+          onChanged={reload}
+        />
+      )}
+      {showTracking && isAdmin && (
+        <TrackingPanel
+          numbers={numbers}
+          onClose={() => setShowTracking(false)}
           onChanged={reload}
         />
       )}
