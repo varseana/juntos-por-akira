@@ -23,6 +23,11 @@ interface TrackingPanelProps {
 
 type Tab = "registrar" | "tabla";
 
+/** Llave unica de un comprador en la tabla: telefono si tiene, nombre si no. */
+function buyerKey(b: { name: string; phone: string | null }): string {
+  return b.phone ? `tel:${normalizePhone(b.phone)}` : `nom:${b.name.toLowerCase()}`;
+}
+
 function formatColones(value: number): string {
   return value.toLocaleString("es-CR");
 }
@@ -48,6 +53,10 @@ export function TrackingPanel({
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  // Fila en edicion inline: clave del comprador + los campos editados.
+  const [editKey, setEditKey] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
 
   const buyers = useMemo(() => groupBuyers(numbers), [numbers]);
   const byN = useMemo(() => {
@@ -159,6 +168,47 @@ export function TrackingPanel({
     );
     reset();
     onChanged();
+    setBusy(false);
+  };
+
+  const startEdit = (b: { name: string; phone: string | null }) => {
+    setEditKey(buyerKey(b));
+    setEditName(b.name);
+    setEditPhone(b.phone ? formatPhone(b.phone) : "");
+    setError(null);
+    setOk(null);
+  };
+
+  const cancelEdit = () => {
+    setEditKey(null);
+    setEditName("");
+    setEditPhone("");
+  };
+
+  const saveEdit = async (buyer: { name: string; phone: string | null; numbers: number[] }) => {
+    const newName = editName.trim();
+    const newPhone = normalizePhone(editPhone);
+    if (!newName) {
+      setError("El nombre no puede quedar vacio.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    const { error: updErr } = await supabase
+      .from("raffle_numbers")
+      .update({
+        buyer_name: newName,
+        buyer_phone: newPhone || null,
+      })
+      .in("n", buyer.numbers);
+    if (updErr) {
+      setError("No se pudo guardar. " + updErr.message);
+    } else {
+      playSuccess();
+      setOk(`Datos de ${newName} actualizados.`);
+      cancelEdit();
+      onChanged();
+    }
     setBusy(false);
   };
 
@@ -394,44 +444,129 @@ export function TrackingPanel({
                     <th>Numeros</th>
                     <th>Cant</th>
                     <th>Colones</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="empty-row">
+                      <td colSpan={6} className="empty-row">
                         No hay resultados para esa busqueda.
                       </td>
                     </tr>
                   ) : (
-                    rows.map((b) => (
-                      <tr key={`${b.phone ?? ""}-${b.name}`}>
-                        <td>{b.name}</td>
-                        <td className="mono">
-                          {b.phone ? formatPhone(b.phone) : "sin telefono"}
-                        </td>
-                        <td>
-                          <span className="chip-row tight">
-                            {b.numbers.map((n) => (
-                              <button
-                                key={n}
-                                type="button"
-                                className="chip chip-ok chip-btn"
-                                onClick={() => release(n)}
-                                disabled={busy}
-                                title={`Liberar el numero ${n}`}
-                              >
-                                {n}
-                              </button>
-                            ))}
-                          </span>
-                        </td>
-                        <td className="mono">{b.numbers.length}</td>
-                        <td className="mono">
-                          {formatColones(b.numbers.length * PRICE_PER_NUMBER)}
-                        </td>
-                      </tr>
-                    ))
+                    rows.map((b) => {
+                      const key = buyerKey(b);
+                      const isEditing = editKey === key;
+                      return (
+                        <tr key={key}>
+                          {isEditing ? (
+                            <>
+                              <td>
+                                <input
+                                  className="input input-cell"
+                                  value={editName}
+                                  onChange={(e) => setEditName(e.target.value)}
+                                  maxLength={80}
+                                  autoFocus
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  className="input input-cell"
+                                  value={editPhone}
+                                  onChange={(e) => setEditPhone(e.target.value)}
+                                  inputMode="tel"
+                                  maxLength={20}
+                                  placeholder="8556 9584"
+                                />
+                              </td>
+                              <td colSpan={2}>
+                                <span className="chip-row tight">
+                                  {b.numbers.map((n) => (
+                                    <button
+                                      key={n}
+                                      type="button"
+                                      className="chip chip-ok chip-btn"
+                                      onClick={() => release(n)}
+                                      disabled={busy}
+                                      title={`Liberar el numero ${n}`}
+                                    >
+                                      {n}
+                                    </button>
+                                  ))}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="row" style={{ gap: 6 }}>
+                                  <button
+                                    type="button"
+                                    className="btn"
+                                    style={{ padding: "4px 10px", fontSize: "0.82rem" }}
+                                    onClick={() => saveEdit(b)}
+                                    disabled={busy}
+                                  >
+                                    Guardar
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn ghost"
+                                    style={{ padding: "4px 10px", fontSize: "0.82rem" }}
+                                    onClick={cancelEdit}
+                                    disabled={busy}
+                                  >
+                                    Cancelar
+                                  </button>
+                                </span>
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td>{b.name}</td>
+                              <td className="mono">
+                                {b.phone ? formatPhone(b.phone) : (
+                                  <span style={{ color: "var(--ink-soft)", fontStyle: "italic" }}>
+                                    sin telefono
+                                  </span>
+                                )}
+                              </td>
+                              <td>
+                                <span className="chip-row tight">
+                                  {b.numbers.map((n) => (
+                                    <button
+                                      key={n}
+                                      type="button"
+                                      className="chip chip-ok chip-btn"
+                                      onClick={() => release(n)}
+                                      disabled={busy}
+                                      title={`Liberar el numero ${n}`}
+                                    >
+                                      {n}
+                                    </button>
+                                  ))}
+                                </span>
+                              </td>
+                              <td className="mono">{b.numbers.length}</td>
+                              <td className="mono">
+                                {formatColones(b.numbers.length * PRICE_PER_NUMBER)}
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="chip chip-ok chip-btn"
+                                  style={{ padding: "3px 10px" }}
+                                  onClick={() => startEdit(b)}
+                                  disabled={busy}
+                                  title="Editar nombre y telefono"
+                                >
+                                  Editar
+                                </button>
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

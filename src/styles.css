@@ -1811,6 +1811,14 @@ body {
   padding: 22px;
 }
 
+/* Input inline dentro de la tabla de seguimiento */
+.input-cell {
+  padding: 5px 8px;
+  font-size: 0.88rem;
+  min-width: 0;
+  width: 100%;
+}
+
 /* ==========================================================================
    Carril de la suerte
    ========================================================================== */
