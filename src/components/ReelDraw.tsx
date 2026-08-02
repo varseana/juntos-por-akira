@@ -158,7 +158,7 @@ export function ReelDraw({ numbers, isAdmin }: ReelDrawProps) {
         El carril de la suerte
       </h2>
       <p className="section-sub" style={{ textAlign: "center" }}>
-        Seras uno de los afortunados en ayudar a Akira?
+        Cuando todos los numeros esten vendidos, aqui se escoge al ganador.
       </p>
 
       <div className="reel" ref={hostRef}>
