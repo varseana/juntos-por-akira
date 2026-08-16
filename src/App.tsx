@@ -66,6 +66,15 @@ export default function App() {
               >
                 Gestionar ticker
               </button>
+              <a
+                className="btn secondary"
+                href="/flyer.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => playPop()}
+              >
+                Generar flyer
+              </a>
               <button className="btn ghost" onClick={() => signOut()}>
                 Cerrar sesion
               </button>

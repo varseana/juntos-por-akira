@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flyer Juntos por Akira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Caveat:wght@700&family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --cream: #fbf3e7;
+        --pink: #f3c9d4;
+        --pink-deep: #d98a9a;
+        --mint: #bfe3cf;
+        --mint-deep: #7abf9e;
+        --lavender: #d9cdeb;
+        --lavender-deep: #8a6d9c;
+        --beige: #e7d8c0;
+        --ink: #5b4a63;
+        --gold: #e0b64a;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background: #d0c4b0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 24px 16px 48px;
+        font-family: "Baloo 2", sans-serif;
+      }
+
+      .controls {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .controls button {
+        font-family: "Baloo 2", sans-serif;
+        font-weight: 800;
+        font-size: 0.92rem;
+        padding: 9px 20px;
+        border-radius: 999px;
+        border: 2.5px solid var(--lavender-deep);
+        background: var(--lavender);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .controls button:hover { background: var(--lavender-deep); color: #fff; }
+
+      .hint {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 0.88rem;
+        color: #5b4a63;
+        opacity: 0.75;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+      .card-wrap {
+        width: min(92vw, 580px);
+        aspect-ratio: 1 / 1;
+      }
+
+      /* ===== CARD 1080x1080 ===== */
+      .card {
+        width: 1080px;
+        height: 1080px;
+        transform-origin: top left;
+        background: var(--cream);
+        background-image:
+          radial-gradient(circle at 8% 10%,  rgba(217,205,235,0.6)  0%, transparent 36%),
+          radial-gradient(circle at 92% 6%,  rgba(243,201,212,0.5)  0%, transparent 32%),
+          radial-gradient(circle at 80% 94%, rgba(191,227,207,0.5)  0%, transparent 36%),
+          radial-gradient(rgba(150,120,90,0.04) 1px, transparent 1px),
+          radial-gradient(rgba(150,120,90,0.03) 1px, transparent 1px);
+        background-size: auto, auto, auto, 7px 7px, 11px 11px;
+        background-position: 0 0, 0 0, 0 0, 0 0, 3px 4px;
+        position: relative;
+        overflow: hidden;
+        padding: 52px 64px 44px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Cuadricula de fondo tenue */
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          repeating-linear-gradient(0deg,   rgba(138,109,156,0.045) 0 1px, transparent 1px 54px),
+          repeating-linear-gradient(90deg,  rgba(138,109,156,0.045) 0 1px, transparent 1px 54px);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Marco de tiza */
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 16px;
+        border: 3px dashed rgba(138,109,156,0.3);
+        border-radius: 30px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Gatos decorativos en las esquinas y laterales */
+      .cat-deco {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .cat-deco svg {
+        display: block;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .cat-tl { top: 30px;  left: 30px;  opacity: 0.11; transform: rotate(-12deg); }
+      .cat-tr { top: 28px;  right: 30px; opacity: 0.10; transform: rotate(14deg) scaleX(-1); }
+      .cat-bl { bottom: 44px; left: 36px; opacity: 0.10; transform: rotate(8deg); }
+      .cat-br { bottom: 40px; right: 34px; opacity: 0.11; transform: rotate(-9deg) scaleX(-1); }
+      .cat-ml { top: 50%; left: 18px;  opacity: 0.08; transform: translateY(-50%) rotate(-6deg); }
+      .cat-mr { top: 50%; right: 18px; opacity: 0.08; transform: translateY(-50%) rotate(6deg) scaleX(-1); }
+
+      /* Huellas dispersas */
+      .paw-deco {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.08;
+      }
+
+      .card-body {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .bunting { margin-bottom: 10px; }
+
+      .card-title {
+        font-size: 80px;
+        font-weight: 800;
+        color: var(--ink);
+        text-align: center;
+        line-height: 1.05;
+        margin-bottom: 6px;
+        letter-spacing: -1px;
+      }
+
+      .card-subtitle {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 32px;
+        color: var(--lavender-deep);
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      /* ===== BARRA DE PROGRESO MULTICOLOR ===== */
+      .progress-wrap {
+        width: 100%;
+        max-width: 840px;
+        margin-bottom: 36px;
+        position: relative;
+      }
+
+      /* Track con bordes redondeados */
+      .progress-track {
+        width: 100%;
+        height: 36px;
+        background: rgba(138,109,156,0.12);
+        border-radius: 999px;
+        overflow: hidden;
+        border: 2.5px solid rgba(138,109,156,0.28);
+        position: relative;
+      }
+
+      /* Relleno degradado de izq a der: rosa -> lavanda -> menta -> oro */
+      .progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(
+          90deg,
+          #d98a9a   0%,
+          #c47bc0  28%,
+          #8a6d9c  52%,
+          #7abf9e  78%,
+          #e0b64a 100%
+        );
+        background-size: 200% 100%;
+        position: relative;
+        transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+        min-width: 6px;
+      }
+
+      /* Rayitas diagonales encima para textura handmade */
+      .progress-fill::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: repeating-linear-gradient(
+          50deg,
+          rgba(255,255,255,0.16) 0 5px,
+          rgba(255,255,255,0)    5px 11px
+        );
+      }
+
+      /* Gatito al final de la barra */
+      .progress-cat {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -58%);
+        width: 44px;
+        height: 44px;
+        transition: left 1.2s cubic-bezier(0.22,1,0.36,1);
+        z-index: 2;
+      }
+
+      .progress-cat svg {
+        width: 44px;
+        height: 44px;
+        filter: drop-shadow(0 2px 4px rgba(91,74,99,0.4));
+      }
+
+      .progress-label {
+        text-align: center;
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 26px;
+        color: var(--lavender-deep);
+        margin-top: 12px;
+      }
+
+      /* ===== TARJETITAS DE ESTADISTICAS ===== */
+      .stats {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 36px;
+        flex-wrap: nowrap;
+      }
+
+      .stat {
+        border: 3px solid rgba(138,109,156,0.28);
+        border-radius: 22px;
+        padding: 20px 32px;
+        text-align: center;
+        box-shadow: 0 8px 0 rgba(91,74,99,0.1);
+        min-width: 200px;
+        position: relative;
+      }
+
+      /* Washi tape encima de cada tarjeta */
+      .stat::before {
+        content: "";
+        position: absolute;
+        top: -13px; left: 50%;
+        width: 80px; height: 22px;
+        transform: translateX(-50%) rotate(-3deg);
+        background: repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,0.28) 0 5px,
+            rgba(255,255,255,0) 5px 10px
+          ),
+          rgba(191,227,207,0.82);
+        border-radius: 2px;
+        -webkit-mask: linear-gradient(90deg, transparent, #000 5px, #000 calc(100% - 5px), transparent);
+        mask: linear-gradient(90deg, transparent, #000 5px, #000 calc(100% - 5px), transparent);
+      }
+
+      .stat:nth-child(1) { background: #fdf0d6; transform: rotate(-1.3deg); }
+      .stat:nth-child(2) { background: #f9dfe6; transform: rotate(0.9deg); }
+      .stat:nth-child(2)::before { transform: translateX(-50%) rotate(2.5deg); background: repeating-linear-gradient(45deg,rgba(255,255,255,0.28) 0 5px,rgba(255,255,255,0) 5px 10px), rgba(243,201,212,0.82); }
+      .stat:nth-child(3) { background: #dcefe0; transform: rotate(-0.7deg); }
+      .stat:nth-child(3)::before { transform: translateX(-50%) rotate(-2deg); background: repeating-linear-gradient(45deg,rgba(255,255,255,0.28) 0 5px,rgba(255,255,255,0) 5px 10px), rgba(217,205,235,0.82); }
+
+      .stat-num {
+        display: block;
+        font-size: 68px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--ink);
+      }
+
+      .stat-lbl {
+        display: block;
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 24px;
+        color: var(--lavender-deep);
+        margin-top: 4px;
+      }
+
+      /* ===== PREMIO ===== */
+      .prize-box {
+        background: #3c2e4a;
+        border-radius: 22px;
+        padding: 22px 52px;
+        text-align: center;
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 0 rgba(30,20,40,0.28);
+        width: 100%;
+        max-width: 840px;
+      }
+
+      .prize-box::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(-45deg, rgba(255,255,255,0.025) 0 4px, transparent 4px 12px);
+      }
+
+      /* Huellas en el fondo oscuro del premio */
+      .prize-box::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='rgba(255,255,255,0.06)'%3E%3Cellipse cx='7.5' cy='9' rx='2.1' ry='2.6'/%3E%3Cellipse cx='12' cy='7' rx='2.1' ry='2.6'/%3E%3Cellipse cx='16.5' cy='9' rx='2.1' ry='2.6'/%3E%3Cpath d='M12 13c-3 0-5 2.2-5 4.3S9.2 20 12 20s5-.6 5-2.7S15 13 12 13z'/%3E%3C/svg%3E");
+        background-size: 80px 80px;
+        pointer-events: none;
+      }
+
+      .prize-row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .prize-kicker {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 26px;
+        color: rgba(255,255,255,0.6);
+        display: block;
+        margin-bottom: 0;
+        position: relative;
+      }
+
+      .prize-amount {
+        font-size: 84px;
+        font-weight: 800;
+        color: var(--gold);
+        line-height: 1;
+        position: relative;
+        text-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      }
+
+      .prize-note {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 21px;
+        color: rgba(255,255,255,0.5);
+        position: relative;
+        margin-top: 2px;
+      }
+
+      .prize-cat {
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      /* ===== SINPE ===== */
+      .sinpe {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        background: rgba(138,109,156,0.1);
+        border-radius: 18px;
+        padding: 20px 36px;
+        margin-bottom: 26px;
+        border: 2px solid rgba(138,109,156,0.2);
+        width: 100%;
+        max-width: 840px;
+      }
+
+      .sinpe-text {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 27px;
+        color: var(--ink);
+        line-height: 1.35;
+      }
+
+      .sinpe-num {
+        font-family: "Baloo 2", sans-serif;
+        font-weight: 800;
+        font-size: 33px;
+        color: var(--lavender-deep);
+        display: block;
+      }
+
+      .card-footer {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 23px;
+        color: var(--lavender-deep);
+        text-align: center;
+        opacity: 0.7;
+      }
+
+      .loading-state {
+        font-family: "Patrick Hand", sans-serif;
+        font-size: 32px;
+        color: var(--lavender-deep);
+        text-align: center;
+        padding: 80px 40px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="controls">
+      <button onclick="loadData()">Recargar estadisticas</button>
+      <button onclick="printCard()">Descargar / Imprimir</button>
+    </div>
+    <p class="hint">Captura el card o usa Imprimir para exportar como imagen 1:1.</p>
+
+    <div class="card-wrap" id="wrap">
+      <div class="card" id="card">
+
+        <!-- Gatos en las esquinas y laterales (decoracion fija) -->
+        <!-- Gato sentado esquina sup izq -->
+        <span class="cat-deco cat-tl">
+          <svg width="110" height="110" viewBox="0 0 100 100" stroke="#5b4a63" stroke-width="2.2">
+            <path d="M14 78c-6-16-4-38 8-50l9 13c9-5 21-5 30 0l9-13c12 12 14 34 8 50"/>
+            <path d="M14 78c6 12 20 18 32 18s26-6 32-18"/>
+            <circle cx="34" cy="52" r="2.4" fill="#5b4a63"/>
+            <circle cx="56" cy="52" r="2.4" fill="#5b4a63"/>
+            <path d="M43 60 Q46 64 50 60 Q54 64 57 60"/>
+            <path d="M35 48 Q30 42 26 44M55 48 Q60 42 64 44"/>
+          </svg>
+        </span>
+        <!-- Gato acurrucado esquina sup der -->
+        <span class="cat-deco cat-tr">
+          <svg width="120" height="80" viewBox="0 0 120 80" stroke="#5b4a63" stroke-width="2.2">
+            <ellipse cx="60" cy="55" rx="42" ry="22"/>
+            <circle cx="60" cy="30" r="18"/>
+            <path d="M46 18 L38 4 L54 14M74 18 L82 4 L66 14"/>
+            <circle cx="52" cy="28" r="2.4" fill="#5b4a63"/>
+            <circle cx="68" cy="28" r="2.4" fill="#5b4a63"/>
+            <path d="M55 35 Q60 39 65 35"/>
+            <path d="M90 48 Q106 44 110 56 Q106 66 90 62"/>
+          </svg>
+        </span>
+        <!-- Gato de pie esquina inf izq -->
+        <span class="cat-deco cat-bl">
+          <svg width="90" height="120" viewBox="0 0 90 120" stroke="#5b4a63" stroke-width="2.2">
+            <path d="M20 110 L20 60 Q20 20 45 20 Q70 20 70 60 L70 110"/>
+            <path d="M20 80 L8 100M70 80 L82 100"/>
+            <circle cx="36" cy="45" r="2.4" fill="#5b4a63"/>
+            <circle cx="54" cy="45" r="2.4" fill="#5b4a63"/>
+            <path d="M38 55 Q45 60 52 55"/>
+            <path d="M22 22 L12 4 L28 16M68 22 L78 4 L62 16"/>
+            <path d="M70 72 Q84 68 86 80 Q84 90 70 86"/>
+          </svg>
+        </span>
+        <!-- Huella pata inferior derecha -->
+        <span class="cat-deco cat-br">
+          <svg width="100" height="100" viewBox="0 0 24 24" stroke="#5b4a63" stroke-width="1.8">
+            <ellipse cx="7.5" cy="9" rx="2.1" ry="2.6"/>
+            <ellipse cx="12" cy="7" rx="2.1" ry="2.6"/>
+            <ellipse cx="16.5" cy="9" rx="2.1" ry="2.6"/>
+            <path d="M12 13c-3 0-5 2.2-5 4.3S9.2 20 12 20s5-.6 5-2.7S15 13 12 13z"/>
+          </svg>
+        </span>
+        <!-- Gato lateral izquierdo mirando -->
+        <span class="cat-deco cat-ml">
+          <svg width="70" height="90" viewBox="0 0 70 90" stroke="#5b4a63" stroke-width="2">
+            <circle cx="35" cy="24" r="20"/>
+            <path d="M20 10 L12 -2 L26 8M50 10 L58 -2 L44 8"/>
+            <circle cx="27" cy="22" r="2.4" fill="#5b4a63"/>
+            <circle cx="43" cy="22" r="2.4" fill="#5b4a63"/>
+            <path d="M30 30 Q35 34 40 30"/>
+            <path d="M35 44 L35 90M20 60 L35 68 L50 60"/>
+          </svg>
+        </span>
+
+        <!-- Huellas dispersas como fondo -->
+        <span class="paw-deco" style="top:38%;right:52px;transform:rotate(20deg)">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="#8a6d9c">
+            <ellipse cx="7.5" cy="9" rx="2.1" ry="2.6"/>
+            <ellipse cx="12" cy="7" rx="2.1" ry="2.6"/>
+            <ellipse cx="16.5" cy="9" rx="2.1" ry="2.6"/>
+            <path d="M12 13c-3 0-5 2.2-5 4.3S9.2 20 12 20s5-.6 5-2.7S15 13 12 13z"/>
+          </svg>
+        </span>
+        <span class="paw-deco" style="top:62%;left:48px;transform:rotate(-15deg)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="#d98a9a">
+            <ellipse cx="7.5" cy="9" rx="2.1" ry="2.6"/>
+            <ellipse cx="12" cy="7" rx="2.1" ry="2.6"/>
+            <ellipse cx="16.5" cy="9" rx="2.1" ry="2.6"/>
+            <path d="M12 13c-3 0-5 2.2-5 4.3S9.2 20 12 20s5-.6 5-2.7S15 13 12 13z"/>
+          </svg>
+        </span>
+
+        <div class="card-body">
+          <p class="loading-state">Cargando estadisticas en vivo...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const SUPABASE_URL = "https://turbsofuturtlbdsabfu.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_dExbzT6u4aMN6GZi-xOMPQ_6_rQtyeU";
+      const TOTAL = 300;
+      const PRICE = 1000;
+      const PRIZE_COLONES = 50000;
+
+      function scaleCard() {
+        const wrap = document.getElementById("wrap");
+        const card = document.getElementById("card");
+        const scale = wrap.clientWidth / 1080;
+        card.style.transform = `scale(${scale})`;
+        wrap.style.height = (1080 * scale) + "px";
+      }
+      scaleCard();
+      window.addEventListener("resize", scaleCard);
+
+      async function fetchJson(path) {
+        const res = await fetch(SUPABASE_URL + path, {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY,
+          }
+        });
+        return res.json();
+      }
+
+      async function loadData() {
+        try {
+          const data = await fetchJson("/rest/v1/raffle_numbers?select=status&limit=300");
+          const sold = data.filter(r => r.status === "sold").length;
+          const available = TOTAL - sold;
+          const pct = Math.round(sold / TOTAL * 100);
+          const raised = sold * PRICE;
+          renderCard(sold, available, pct, raised);
+        } catch(e) {
+          document.querySelector(".card-body").innerHTML =
+            '<p class="loading-state">No se pudo cargar. Revisa tu conexion.</p>';
+        }
+      }
+
+      function fmt(n) { return n.toLocaleString("es-CR"); }
+
+      const PAW_SVG = `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#5b4a63" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="7.5" cy="9" rx="2.1" ry="2.6"/><ellipse cx="12" cy="7" rx="2.1" ry="2.6"/><ellipse cx="16.5" cy="9" rx="2.1" ry="2.6"/><path d="M12 13c-3 0-5 2.2-5 4.3S9.2 20 12 20s5-.6 5-2.7S15 13 12 13z"/></svg>`;
+      const PHONE_SVG = `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#8a6d9c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/></svg>`;
+
+      function renderCard(sold, available, pct, raised) {
+        // El gatito en la punta de la barra va desde 4% (minimo visible) al 98%
+        const catPct = Math.max(4, Math.min(98, pct));
+
+        document.querySelector(".card-body").innerHTML = `
+          <svg class="bunting" width="480" height="48" viewBox="0 0 480 48" aria-hidden="true">
+            <path d="M8 10 Q240 36 472 10" fill="none" stroke="#8a6d9c" stroke-width="2.4"/>
+            ${[18,76,134,192,250,308,366,424].map((x,i) => {
+              const fs = ["#f3c9d4","#bfe3cf","#d9cdeb","#f4e7d3","#f9dfe6","#eae2f5","#bfe3cf","#fdf0d6"];
+              return `<path d="M${x} 12 L${x+30} 14 L${x+15} 40 Z" fill="${fs[i%fs.length]}" stroke="#8a6d9c" stroke-width="1.8" stroke-linejoin="round"/>`;
+            }).join("")}
+          </svg>
+
+          <h1 class="card-title">Juntos por Akira</h1>
+          <p class="card-subtitle">Una rifa solidaria para ayudar a nuestra gatita</p>
+
+          <div class="progress-wrap">
+            <div class="progress-track">
+              <div class="progress-fill" style="width:${pct}%"></div>
+              <span class="progress-cat" style="left:${catPct}%">
+                <svg width="44" height="44" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 78c-6-16-4-38 8-50l9 13c9-5 21-5 30 0l9-13c12 12 14 34 8 50"/>
+                  <path d="M14 78c6 12 20 18 32 18s26-6 32-18"/>
+                  <circle cx="34" cy="52" r="3" fill="#fff"/>
+                  <circle cx="56" cy="52" r="3" fill="#fff"/>
+                </svg>
+              </span>
+            </div>
+            <p class="progress-label">${sold} de ${TOTAL} numeros vendidos · ${pct}% completado</p>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-num">${available}</span>
+              <span class="stat-lbl">Disponibles</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">${sold}</span>
+              <span class="stat-lbl">Ya vendidos</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">${fmt(raised)}</span>
+              <span class="stat-lbl">Colones recaudados</span>
+            </div>
+          </div>
+
+          <div class="prize-box">
+            <div class="prize-row">
+              <div class="prize-cat">
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 78c-6-16-4-38 8-50l9 13c9-5 21-5 30 0l9-13c12 12 14 34 8 50"/>
+                  <path d="M14 78c6 12 20 18 32 18s26-6 32-18"/>
+                  <circle cx="34" cy="52" r="2.4" fill="rgba(255,255,255,0.55)"/>
+                  <circle cx="56" cy="52" r="2.4" fill="rgba(255,255,255,0.55)"/>
+                  <path d="M42 60 Q46 65 50 60 Q54 65 58 60"/>
+                </svg>
+              </div>
+              <div>
+                <span class="prize-kicker">Premio de la rifa</span>
+                <div class="prize-amount">&#x20A1;${fmt(PRIZE_COLONES)}</div>
+                <p class="prize-note">Sorteo al vender los 300 numeros</p>
+              </div>
+              <div class="prize-cat">
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="50" cy="65" rx="36" ry="20"/>
+                  <circle cx="50" cy="36" r="22"/>
+                  <path d="M34 22 L26 6 L40 18M66 22 L74 6 L60 18"/>
+                  <circle cx="41" cy="34" r="2.4" fill="rgba(255,255,255,0.55)"/>
+                  <circle cx="59" cy="34" r="2.4" fill="rgba(255,255,255,0.55)"/>
+                  <path d="M45 44 Q50 48 55 44"/>
+                  <path d="M76 56 Q90 52 92 64 Q90 74 76 70"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="sinpe">
+            ${PHONE_SVG}
+            <div class="sinpe-text">
+              Aparta tu numero con Sinpe Movil
+              <span class="sinpe-num">+506 8556 9584</span>
+              Indica el numero que quieres en el motivo
+            </div>
+          </div>
+
+          <p class="card-footer">juntos-por-akira.vercel.app</p>
+        `;
+
+        // Forzar reflow para que la transicion de la barra corra
+        requestAnimationFrame(() => {
+          const fill = document.querySelector(".progress-fill");
+          if (fill) fill.style.width = pct + "%";
+          const cat = document.querySelector(".progress-cat");
+          if (cat) cat.style.left = catPct + "%";
+          scaleCard();
+        });
+      }
+
+      function printCard() { window.print(); }
+
+      loadData();
+    </script>
+
+    <style media="print">
+      body { background: white; padding: 0; margin: 0; }
+      .controls, .hint { display: none !important; }
+      .card-wrap { width: 100vmin; height: 100vmin; }
+      @page { size: 1080px 1080px; margin: 0; }
+    </style>
+  </body>
+</html>
